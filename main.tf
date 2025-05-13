@@ -11,8 +11,8 @@ provider "aws" {
   region = var.aws_region
 }
 
-resource "aws_security_group" "vm_sg" {
-  name        = "vm-security-group"
+resource "aws_security_group" "vm_sg_terraform" {
+  name        = "vm-security-group-terraform"
   description = "Permite SSH e acesso HTTP"
 
   ingress {
