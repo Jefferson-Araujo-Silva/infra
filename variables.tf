@@ -15,3 +15,9 @@ variable "ami_id" {
   type        = string
   default     = "ami-084568db4383264d4"
 }
+
+variable "security_group_name" {
+  description = "Nome do grupo de segurança"
+  type        = string
+  default     = "vm_sg"
+}
