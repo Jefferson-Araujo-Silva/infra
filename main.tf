@@ -40,7 +40,7 @@ provider "aws" {
 resource "aws_instance" "vm" {
   ami             = var.ami_id
   instance_type   = var.instance_type
-  security_groups = [aws_security_group.vm_sg.name]
+  security_groups = [var.security_group_name]
 
   tags = {
     Name = "TerraformVM"
