@@ -11,7 +11,7 @@ variable "instance_type" {
 }
 
 variable "ami_id" {
-  description = "AMI ID (Amazon Linux 2 em us-east-1)"
+  description = "AMI ID (Ubuntu em us-east-1)"
   type        = string
   default     = "ami-084568db4383264d4"
 }
