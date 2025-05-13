@@ -1,0 +1,54 @@
+name: Terraform Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate-and-apply:
+    name: Terraform Validate & Apply
+    runs-on: ubuntu-latest
+    timeout-minutes: 15  # Importante para labs com tempo limitado
+    environment: production  # Habilita aprovação manual para o apply
+
+    steps:
+      # Passo 1: Baixar o código
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Passo 2: Configurar credenciais AWS (apenas para apply)
+      - name: Configure AWS Credentials
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}  # Se necessário
+        run: |
+          echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> $GITHUB_ENV
+          echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> $GITHUB_ENV
+          echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
+
+      # Passo 3: Instalar Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Passo 4: Inicializar providers
+      - name: Terraform Init
+        run: terraform init
+
+      # Passo 5: Validar sintaxe do código
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Passo 6: Planejar mudanças (opcional para pull requests)
+      - name: Terraform Plan
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        run: terraform plan -input=false
+
+      # Passo 7: Aplicar mudanças (apenas na branch main após aprovação)
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
