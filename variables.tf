@@ -19,5 +19,5 @@ variable "ami_id" {
 variable "security_group_name" {
   description = "Nome do grupo de segurança"
   type        = string
-  default     = "vm-security-group-terraform"
+  default     = "vm-security-group-terraform2"
 }
